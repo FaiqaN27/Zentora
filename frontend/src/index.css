@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+
+  --breakpoint-1000px: 1050px;
+  --breakpoints-1100px: 1110px;
+  --breakpoint-800px: 800px;
+  --breakpoint-1300px: 1300px;
+  --breakpoint-400px: 400px;
+}
