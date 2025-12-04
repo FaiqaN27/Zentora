@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import styles from "../../styles/styles";
+import styles from "../../../styles/styles";
 import { Link } from "react-router-dom";
 
 const UserLogin = () => {
@@ -117,7 +117,7 @@ const UserLogin = () => {
         <p className="text-center text-gray-600 mt-6">
           Dont have an account?{" "}
           <Link
-            to="/sign-up"
+            to="/user/register"
             className="text-blue-500 hover:underline cursor-pointer"
           >
             Sign Up

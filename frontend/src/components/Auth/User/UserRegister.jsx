@@ -3,15 +3,24 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import Loader from "../../General/Loader";
 
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserRegister = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -20,30 +29,38 @@ const UserRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("avatar", avatar);
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("password", password);
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("password", formData.password);
+      data.append("avatar", avatar);
 
       const config = { headers: { "Content-type": "multipart/form-data" } };
 
-      const res = await axios.post(
+      const response = await axios.post(
         `${BACKEND_BASE_URL}/users/register`,
-        formData,
+        data,
         config
       );
 
-      setName("");
-      setEmail("");
-      setPassword("");
+      setLoading(false);
+      toast.success(response.data.message);
+
+      setFormData({ name: "", email: "", password: "" });
       setAvatar(null);
-    } catch (error) {}
+    } catch (err) {
+      setLoading(false);
+      //Issue Here
+      console.log(err.response?.data?.message);
+      toast.error(err.response?.data?.message);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white relative flex items-center justify-center px-4 overflow-hidden">
+      {loading && <Loader />}
       <div
         className="absolute top-10 left-72 w-[600px] h-[500px] bg-pink-400 rounded-full 
         opacity-50 blur-[100px] -translate-x-1/8"
@@ -51,7 +68,7 @@ const UserRegister = () => {
 
       <div
         className="absolute bottom-10 right-72 w-[600px] h-[500px] bg-blue-400 rounded-full 
-        opacity-50 blur-[100px] translate-x-1/8"
+        opacity-50 blur-[100px] translate-y-1/8"
       ></div>
 
       <div className="relative z-10 max-w-md w-full bg-white shadow-2xl rounded-2xl p-10 border border-gray-200">
@@ -62,7 +79,7 @@ const UserRegister = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label
-              htmlFor="username"
+              htmlFor="name"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Full Name
@@ -73,8 +90,8 @@ const UserRegister = () => {
               id="name"
               autoComplete="name"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={formData.name}
+              onChange={handleChange}
               placeholder="full name"
               className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg 
                 focus:ring-2 focus:ring-blue-300"
@@ -94,8 +111,8 @@ const UserRegister = () => {
               id="email"
               autoComplete="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               placeholder="you@example.com"
               className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg 
                 focus:ring-2 focus:ring-blue-300"
@@ -115,8 +132,8 @@ const UserRegister = () => {
               id="password"
               autoComplete="current-password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               placeholder="••••••••"
               className="relative appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg 
                 focus:ring-2 focus:ring-blue-300"
@@ -172,19 +189,20 @@ const UserRegister = () => {
           </div>
 
           <button
+            disabled={loading}
             type="submit"
             className="w-full py-2 rounded-lg cursor-pointer
                font-semibold text-white bg-blue-600 
               hover:bg-blue-700 transition"
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
         <p className="text-center text-gray-600 mt-6">
           Already Have an account?{" "}
           <Link
-            to="/login"
+            to="/user/login"
             className="text-blue-500 hover:underline cursor-pointer"
           >
             Sign in
