@@ -1,13 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LoginPage } from "./routes/Routes";
-import { SignupPage } from "./routes/Routes";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import {
+  // User Auth
+  UserLoginPage,
+  UserRegisterPage,
+} from "./pages";
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignupPage />} />
+        <Route path="/user/login" element={<UserLoginPage />} />
+        <Route path="/user/register" element={<UserRegisterPage />} />
       </Routes>
     </BrowserRouter>
   );

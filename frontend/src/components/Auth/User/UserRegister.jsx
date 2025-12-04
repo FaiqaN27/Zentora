@@ -1,24 +1,47 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
-import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const Signup = () => {
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+const UserRegister = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     setAvatar(file);
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("avatar", avatar);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+
+      const config = { headers: { "Content-type": "multipart/form-data" } };
+
+      const res = await axios.post(
+        `${BACKEND_BASE_URL}/users/register`,
+        formData,
+        config
+      );
+
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar(null);
+    } catch (error) {}
+  };
+
   return (
     <div className="min-h-screen bg-white relative flex items-center justify-center px-4 overflow-hidden">
       <div
@@ -172,4 +195,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default UserRegister;
