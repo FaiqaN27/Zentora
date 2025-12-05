@@ -39,14 +39,14 @@ const UserRegister = () => {
 
       const config = { headers: { "Content-type": "multipart/form-data" } };
 
-      const response = await axios.post(
+      const res = await axios.post(
         `${BACKEND_BASE_URL}/users/register`,
         data,
         config
       );
 
       setLoading(false);
-      toast.success(response.data.message);
+      toast.success(res.data.message);
 
       setFormData({ name: "", email: "", password: "" });
       setAvatar(null);
