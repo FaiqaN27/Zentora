@@ -4,6 +4,7 @@ import cloudinary from "../config/cloudinary.js";
 import catchAsyncError from "../middlewares/catchAsyncError.js";
 import jwt from "jsonwebtoken";
 import sendMail from "../utils/sendMail.js";
+import sendToken from "../utils/JwtToken.js";
 
 const createActivationToken = (user) => {
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
@@ -11,7 +12,7 @@ const createActivationToken = (user) => {
   });
 };
 
-export const handleCreateUser = catchAsyncError(async (req, res, next) => {
+export const handleRegisterUser = catchAsyncError(async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     const userEmail = await User.findOne({ email });
@@ -36,9 +37,9 @@ export const handleCreateUser = catchAsyncError(async (req, res, next) => {
     }
 
     const user = {
-      name,
-      email,
-      password,
+      name: name,
+      email: email,
+      password: password,
       avatar: avatarUrl,
     };
 
@@ -66,3 +67,36 @@ export const handleCreateUser = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler(error.message, 500));
   }
 });
+
+export const handleUserAccoutActivation = catchAsyncError(
+  async (req, res, next) => {
+    try {
+      const { activation_token } = req.body;
+
+      const user = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+      if (!user) {
+        return next(new ErrorHandler("Invalid activation token", 400));
+      }
+
+      const { name, email, password, avatar } = user;
+
+      const userEmail = await User.findOne({ email });
+      if (userEmail) {
+        return next(
+          new ErrorHandler("User with this email already exists", 400)
+        );
+      }
+
+      const newUser = await User.create({
+        name,
+        email,
+        password,
+        avatar,
+      });
+
+      sendToken(newUser, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

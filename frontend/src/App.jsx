@@ -5,6 +5,7 @@ import {
   // User Auth
   UserLoginPage,
   UserRegisterPage,
+  UserActivationPage,
 } from "./pages";
 
 const App = () => {
@@ -24,6 +25,10 @@ const App = () => {
       <Routes>
         <Route path="/user/login" element={<UserLoginPage />} />
         <Route path="/user/register" element={<UserRegisterPage />} />
+        <Route
+          path="/user/activation/:activation_token"
+          element={<UserActivationPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

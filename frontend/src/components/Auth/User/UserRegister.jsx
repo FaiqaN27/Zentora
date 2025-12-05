@@ -52,8 +52,6 @@ const UserRegister = () => {
       setAvatar(null);
     } catch (err) {
       setLoading(false);
-      //Issue Here
-      console.log(err.response?.data?.message);
       toast.error(err.response?.data?.message);
     }
   };

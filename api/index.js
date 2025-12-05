@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import ErrorHandler from "./utils/ErrorHandler.js";
+import ErrorHandler from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import cors from "cors";
